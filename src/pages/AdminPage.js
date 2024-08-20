@@ -94,7 +94,7 @@ function AdminPage({ toggleTheme }) {
   const handleSubmit = async () => {
     try {
       const data = { question, answer, category };
-      await axios.post('http://localhost:5001/admin/add', data, { withCredentials: true });
+      await axios.post('https://backend-production-b84e.up.railway.app/admin/add', data, { withCredentials: true });
       alert('Q&A Added Successfully');
       setQuestion('');
       setAnswer('');

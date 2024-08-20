@@ -34,7 +34,7 @@ function QuestionForm() {
 
   const handleSubmit = async () => {
     const data = { question, answer };
-    await axios.post('http://localhost:5001/admin/add', data);
+    await axios.post('https://backend-production-b84e.up.railway.app/admin/add', data);
     alert('Q&A Added Successfully');
   };
 
