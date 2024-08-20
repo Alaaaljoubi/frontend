@@ -104,7 +104,7 @@ function HomePage({ toggleTheme }) {
 
   const handleAsk = async () => {
     try {
-      const response = await axios.post('http://localhost:5001/kbs', { question });
+      const response = await axios.post('https://backend-production-b84e.up.railway.app/kbs', { question });
       setAnswer(response.data.answer);
     } catch (error) {
       console.error('Error:', error);
