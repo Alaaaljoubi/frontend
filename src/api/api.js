@@ -1,7 +1,7 @@
-// src/api/api.js
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5001';
+// Update API_URL to the Railway backend domain
+const API_URL = 'https://backend-production-b84e.up.railway.app';
 
 export const login = (credentials) => axios.post(`${API_URL}/admin/login`, credentials);
 export const logout = () => axios.post(`${API_URL}/admin/logout`);
