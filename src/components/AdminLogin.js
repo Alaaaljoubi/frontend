@@ -1,41 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 import MEULogo from '../assets/MEU_logo.png';
 
-const AdminWrapper = styled.div`
+const LoginWrapper = styled.div`
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  padding: 20px;
-  background-color: ${({ theme }) => theme.background};
-  color: ${({ theme }) => theme.color};
+  height: 100vh;
+  background: linear-gradient(135deg, #A62B2F 0%, #764ba2 100%); /* MEU dark red with a gradient */
+`;
+
+const LoginBox = styled.div`
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  width: 320px;
+  text-align: center;
 `;
 
 const Logo = styled.img`
-  width: 150px;
+  width: 120px;
   margin-bottom: 20px;
-`;
-
-const ContentWrapper = styled.div`
-  width: 100%;
-  max-width: 600px;
-  padding: 30px;
-  background-color: ${({ theme }) => theme.inputBackground};
-  border-radius: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  margin-bottom: 20px;
-`;
-
-const Heading = styled.h2`
-  margin-bottom: 30px;
-  color: ${({ theme }) => theme.buttonBackground};
-  font-family: 'Poppins', sans-serif;
-  letter-spacing: 1px;
 `;
 
 const Input = styled.input`
@@ -47,20 +35,10 @@ const Input = styled.input`
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 `;
 
-const Textarea = styled.textarea`
-  margin-bottom: 20px;
+const Button = styled.button`
   padding: 15px;
   width: 100%;
-  height: 150px;
-  border-radius: 25px;
-  border: 1px solid #ccc;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-`;
-
-const Button = styled.button`
-  padding: 15px 30px;
-  width: 100%;
-  background-color: ${({ theme }) => theme.buttonBackground};
+  background-color: #A62B2F; /* MEU dark red */
   border: none;
   border-radius: 25px;
   color: white;
@@ -69,115 +47,57 @@ const Button = styled.button`
   letter-spacing: 1px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
-  margin-top: 20px;
 
   &:hover {
-    background-color: #8C2227;
+    background-color: #8C2227; /* Slightly darker red for hover */
     transform: translateY(-2px);
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
   }
 `;
 
-const BackButton = styled(Button)`
-  background-color: #333333;
-
-  &:hover {
-    background-color: #555555;
-  }
-`;
-
-const JSONContainer = styled.div`
-  margin-top: 20px;
-  text-align: left;
-  max-height: 300px;
-  overflow-y: auto;
-  background-color: ${({ theme }) => theme.inputBackground};
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-`;
-
-function AdminPage({ toggleTheme }) {
-  const [question, setQuestion] = useState('');
-  const [answer, setAnswer] = useState('');
-  const [category, setCategory] = useState('general');
-  const [jsonData, setJsonData] = useState(null); // State to hold the JSON data
+function AdminLogin() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  // Fetch the JSON data from the server
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('https://backend-production-b84e.up.railway.app/view-questions', { withCredentials: true });
-        setJsonData(response.data);
-      } catch (error) {
-        console.error('Error fetching JSON data:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const handleSubmit = async () => {
+  // Handle login action
+  const handleLogin = async () => {
     try {
-      const data = { question, answer, category };
-      await axios.post('https://backend-production-b84e.up.railway.app/admin/add', data, { withCredentials: true });
-      alert('Q&A Added Successfully');
-      setQuestion('');
-      setAnswer('');
-      setCategory('general');
+      const response = await axios.post(
+        'https://backend-production-b84e.up.railway.app/admin/login',
+        { email, password },
+        { withCredentials: true } // This ensures that cookies are sent/received with the request
+      );
+      if (response.status === 200) {
+        navigate('/admin'); // Navigate to the admin page upon successful login
+      }
     } catch (error) {
-      alert('You are not authorized. Please log in.');
+      console.error('Login error:', error);
+      alert('Invalid credentials');
     }
   };
 
-  const handleBackToHome = () => {
-    navigate('/');
-  };
-
-  const handleDownload = () => {
-    window.location.href = 'https://backend-production-b84e.up.railway.app/download-questions';
-  };
-
   return (
-    <AdminWrapper>
-      <Logo src={MEULogo} alt="MEU Logo" />
-      <ContentWrapper>
-        <Heading>Add New Q&A</Heading>
+    <LoginWrapper>
+      <LoginBox>
+        <Logo src={MEULogo} alt="MEU Logo" />
+        <h2>Admin Login</h2>
         <Input
-          type="text"
-          placeholder="Category"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <Input
-          type="text"
-          placeholder="Question"
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
-        <Textarea
-          placeholder="Answer"
-          value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
-        />
-        <Button onClick={handleSubmit}>Submit</Button>
-        <BackButton onClick={handleBackToHome}>Back to Home Page</BackButton>
-        <Button onClick={handleDownload}>Download JSON File</Button>
-      </ContentWrapper>
-
-      {/* Display the JSON data */}
-      {jsonData && (
-        <JSONContainer>
-          <pre>{JSON.stringify(jsonData, null, 2)}</pre>
-        </JSONContainer>
-      )}
-
-      <Button onClick={toggleTheme} style={{ marginTop: '20px' }}>
-        Switch Theme
-      </Button>
-    </AdminWrapper>
+        <Button onClick={handleLogin}>Login</Button>
+      </LoginBox>
+    </LoginWrapper>
   );
 }
 
-export default AdminPage;
+export default AdminLogin;
